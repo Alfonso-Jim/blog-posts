@@ -4,10 +4,12 @@ import jsonPlaceholder from "../apis/jsonPlaceholder";
 // Effective way to do it
 export const fetchPostsAndUsers = () => async (dispatch, getState) => {
   await dispatch(fetchPosts());
-  // _ version of map, to get unique id's and specific users
-  const userIds = _.uniq(_.map(getState().posts, "userId"));
-  // async await syntax can't work with forEach
-  userIds.forEach((id) => dispatch(fetchUser(id)));
+
+  _.chain(getState().posts)
+    .map("userId")
+    .uniq()
+    .forEach((id) => dispatch(fetchUser(id)))
+    .value();
 };
 
 export const fetchPosts = () => async (dispatch) => {
